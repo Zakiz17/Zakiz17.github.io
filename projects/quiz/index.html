@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Programistyczny — Kacper</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0f0f1a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .quiz {
+            background: #1a1a2e;
+            padding: 2rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 550px;
+            margin: 1rem;
+            border: 1px solid #2a2a4a;
+        }
+        h1 { text-align: center; color: #a29bfe; margin-bottom: 0.5rem; }
+        .progress {
+            text-align: center;
+            color: #8888a0;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+        .progress-bar {
+            height: 6px;
+            background: #16213e;
+            border-radius: 3px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #6c5ce7;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        .answers { display: flex; flex-direction: column; gap: 0.6rem; }
+        .answers button {
+            padding: 1rem 1.2rem;
+            background: #16213e;
+            border: 2px solid #2a2a4a;
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s;
+        }
+        .answers button:hover { border-color: #6c5ce7; background: #1e2a4a; }
+        .answers button.correct { border-color: #00b894; background: rgba(0,184,148,0.15); color: #00b894; }
+        .answers button.wrong { border-color: #ff6b6b; background: rgba(255,107,107,0.15); color: #ff6b6b; }
+        .answers button:disabled { cursor: default; opacity: 0.7; }
+        .next-btn {
+            display: none;
+            margin: 1.5rem auto 0;
+            padding: 0.8rem 2rem;
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .next-btn:hover { background: #5a4bd1; }
+        .result {
+            text-align: center;
+            padding: 2rem 0;
+        }
+        .result .score {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #6c5ce7;
+            margin: 1rem 0;
+        }
+        .result .message { color: #8888a0; font-size: 1.1rem; margin-bottom: 1.5rem; }
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #a29bfe;
+            text-decoration: none;
+        }
+        .back:hover { color: #6c5ce7; }
+    </style>
+</head>
+<body>
+    <div class="quiz" id="quiz">
+        <h1>Quiz Programistyczny</h1>
+        <div class="progress">
+            <span id="progressText">Pytanie 1 z 10</span>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+        <div class="question" id="question"></div>
+        <div class="answers" id="answers"></div>
+        <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Nastepne pytanie</button>
+        <a href="../../index.html" class="back">&larr; Wroc do portfolio</a>
+    </div>
+    <script>
+        const questions = [
+            { q: "Co oznacza HTML?", a: ["HyperText Markup Language", "High Tech Modern Language", "Home Tool Markup Language", "Hyper Transfer Markup Language"], correct: 0 },
+            { q: "Ktory jezyk sluzy do stylowania stron?", a: ["JavaScript", "Python", "CSS", "HTML"], correct: 2 },
+            { q: "Co robi console.log() w JavaScript?", a: ["Tworzy plik", "Wyswietla dane w konsoli", "Loguje uzytkownika", "Zapisuje do bazy danych"], correct: 1 },
+            { q: "Co oznacza CSS?", a: ["Computer Style Sheets", "Creative Style System", "Cascading Style Sheets", "Colorful Style Sheets"], correct: 2 },
+            { q: "Ktory tag HTML tworzy naglowek?", a: ["<p>", "<h1>", "<div>", "<span>"], correct: 1 },
+            { q: "Jak zadeklarowac zmienna w JavaScript (ES6)?", a: ["var x = 5", "let x = 5", "int x = 5", "x := 5"], correct: 1 },
+            { q: "Co robi operator === w JavaScript?", a: ["Przypisuje wartosc", "Porownuje wartosc i typ", "Porownuje tylko wartosc", "Deklaruje zmienna"], correct: 1 },
+            { q: "Ktore z tych NIE jest jezykiem programowania?", a: ["Python", "Java", "HTML", "C++"], correct: 2 },
+            { q: "Co oznacza API?", a: ["Application Programming Interface", "Advanced Program Installation", "Application Process Integration", "Automated Programming Interface"], correct: 0 },
+            { q: "Git sluzy do:", a: ["Tworzenia grafiki", "Kontroli wersji kodu", "Hostowania stron", "Pisania emaili"], correct: 1 }
+        ];
+
+        let current = 0;
+        let score = 0;
+        let answered = false;
+
+        function render() {
+            if (current >= questions.length) return showResult();
+            const q = questions[current];
+            document.getElementById('question').textContent = q.q;
+            document.getElementById('progressText').textContent = `Pytanie ${current + 1} z ${questions.length}`;
+            document.getElementById('progressFill').style.width = ((current) / questions.length * 100) + '%';
+            document.getElementById('nextBtn').style.display = 'none';
+            answered = false;
+
+            const answersDiv = document.getElementById('answers');
+            answersDiv.innerHTML = q.a.map((a, i) => `<button onclick="answer(${i})">${a}</button>`).join('');
+        }
+
+        function answer(i) {
+            if (answered) return;
+            answered = true;
+            const btns = document.querySelectorAll('.answers button');
+            const correct = questions[current].correct;
+            btns.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === correct) btn.classList.add('correct');
+                if (idx === i && i !== correct) btn.classList.add('wrong');
+            });
+            if (i === correct) score++;
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            current++;
+            render();
+        }
+
+        function showResult() {
+            const pct = Math.round(score / questions.length * 100);
+            let msg = '';
+            if (pct === 100) msg = 'Perfekcyjnie! Jestes mistrzem!';
+            else if (pct >= 70) msg = 'Swietny wynik! Znasz podstawy!';
+            else if (pct >= 50) msg = 'Niezle, ale jest co poprawiac!';
+            else msg = 'Ucz sie dalej, dasz rade!';
+
+            document.getElementById('quiz').innerHTML = `
+                <h1>Quiz Programistyczny</h1>
+                <div class="result">
+                    <div class="score">${score}/${questions.length}</div>
+                    <div class="message">${msg}</div>
+                    <button class="next-btn" style="display:inline-block" onclick="location.reload()">Zagraj ponownie</button>
+                </div>
+                <a href="../../index.html" class="back">&larr; Wroc do portfolio</a>
+            `;
+        }
+
+        render();
+    </script>
+</body>
+</html>

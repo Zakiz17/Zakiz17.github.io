@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do App — Kacper</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0f0f1a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .app {
+            background: #1a1a2e;
+            padding: 2rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            margin: 1rem;
+            border: 1px solid #2a2a4a;
+        }
+        h1 { text-align: center; margin-bottom: 1.5rem; color: #a29bfe; }
+        .input-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid #2a2a4a;
+            border-radius: 8px;
+            background: #16213e;
+            color: #e0e0e0;
+            font-size: 1rem;
+        }
+        input:focus { outline: none; border-color: #6c5ce7; }
+        button {
+            padding: 0.8rem 1.5rem;
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover { background: #5a4bd1; }
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .filters button {
+            padding: 0.4rem 1rem;
+            font-size: 0.85rem;
+            background: #16213e;
+            border: 1px solid #2a2a4a;
+        }
+        .filters button.active { background: #6c5ce7; border-color: #6c5ce7; }
+        .task-list { list-style: none; }
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1rem;
+            background: #16213e;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border: 1px solid #2a2a4a;
+            transition: all 0.3s;
+        }
+        .task-item:hover { border-color: #6c5ce7; }
+        .task-item.done span { text-decoration: line-through; color: #555; }
+        .task-item input[type="checkbox"] {
+            width: 20px; height: 20px; cursor: pointer;
+            accent-color: #6c5ce7;
+        }
+        .task-item span { flex: 1; }
+        .task-item .delete {
+            background: none; color: #ff6b6b; padding: 0.3rem 0.6rem;
+            font-size: 0.9rem;
+        }
+        .task-item .delete:hover { background: rgba(255,107,107,0.1); }
+        .stats { text-align: center; margin-top: 1rem; color: #8888a0; font-size: 0.9rem; }
+        .back { display: block; text-align: center; margin-top: 1.5rem; color: #a29bfe; text-decoration: none; }
+        .back:hover { color: #6c5ce7; }
+        .empty { text-align: center; color: #8888a0; padding: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <h1>Lista Zadan</h1>
+        <div class="input-row">
+            <input type="text" id="taskInput" placeholder="Dodaj nowe zadanie...">
+            <button onclick="addTask()">Dodaj</button>
+        </div>
+        <div class="filters">
+            <button class="active" onclick="setFilter('all', this)">Wszystkie</button>
+            <button onclick="setFilter('active', this)">Aktywne</button>
+            <button onclick="setFilter('done', this)">Ukonczone</button>
+        </div>
+        <ul class="task-list" id="taskList"></ul>
+        <div class="stats" id="stats"></div>
+        <a href="../../index.html" class="back">&larr; Wroc do portfolio</a>
+    </div>
+    <script>
+        let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+        let filter = 'all';
+
+        function saveTasks() {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const text = input.value.trim();
+            if (!text) return;
+            tasks.push({ id: Date.now(), text, done: false });
+            input.value = '';
+            saveTasks();
+            render();
+        }
+
+        document.getElementById('taskInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTask();
+        });
+
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) task.done = !task.done;
+            saveTasks();
+            render();
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            saveTasks();
+            render();
+        }
+
+        function setFilter(f, btn) {
+            filter = f;
+            document.querySelectorAll('.filters button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            render();
+        }
+
+        function render() {
+            const list = document.getElementById('taskList');
+            const filtered = tasks.filter(t => {
+                if (filter === 'active') return !t.done;
+                if (filter === 'done') return t.done;
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty">Brak zadan</div>';
+            } else {
+                list.innerHTML = filtered.map(t => `
+                    <li class="task-item ${t.done ? 'done' : ''}">
+                        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})">
+                        <span>${t.text}</span>
+                        <button class="delete" onclick="deleteTask(${t.id})">Usun</button>
+                    </li>
+                `).join('');
+            }
+
+            const done = tasks.filter(t => t.done).length;
+            document.getElementById('stats').textContent =
+                `${done} z ${tasks.length} ukonczonych`;
+        }
+
+        render();
+    </script>
+</body>
+</html>

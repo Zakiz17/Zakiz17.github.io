@@ -367,6 +367,56 @@ a:hover {
     gap: 0.8rem;
 }
 
+/* ===== Hire Me ===== */
+.hire-desc {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.hire-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.hire-card {
+    display: block;
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    text-align: center;
+    transition: transform 0.3s, border-color 0.3s;
+    text-decoration: none;
+}
+
+.hire-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+}
+
+.hire-icon {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 0.8rem;
+}
+
+.hire-card h3 {
+    color: var(--text);
+    margin-bottom: 0.3rem;
+    font-size: 1.2rem;
+}
+
+.hire-card p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
 /* ===== Contact ===== */
 .contact-content {
     max-width: 600px;
