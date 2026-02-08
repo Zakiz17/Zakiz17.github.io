@@ -1,18 +1,32 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kacper — Junior Developer | Tworzenie stron i aplikacji</title>
     <meta name="description" content="Kacper — Junior Developer. Tworze strony internetowe, aplikacje webowe i projekty w JavaScript. Dostepny na zlecenia freelance.">
     <meta name="keywords" content="developer, programista, freelancer, strony internetowe, JavaScript, HTML, CSS, Polska">
+    <meta name="author" content="Kacper">
     <meta property="og:title" content="Kacper — Junior Developer Portfolio">
     <meta property="og:description" content="Tworze strony internetowe i aplikacje webowe. Sprawdz moje projekty i napisz do mnie!">
     <meta property="og:url" content="https://Zakiz17.github.io">
     <meta property="og:type" content="website">
+    <meta name="theme-color" content="#6c5ce7">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="preloader-inner">
+            <div class="preloader-circle"></div>
+            <span class="preloader-text">Kacper<span class="accent">.</span></span>
+        </div>
+    </div>
+
     <!-- Nawigacja -->
     <nav class="navbar">
         <div class="nav-brand">Kacper<span class="accent">.</span></div>
@@ -21,24 +35,42 @@
             <li><a href="#about">O mnie</a></li>
             <li><a href="#skills">Umiejetnosci</a></li>
             <li><a href="#projects">Projekty</a></li>
+            <li><a href="#timeline">Droga</a></li>
             <li><a href="#hire">Zatrudnij mnie</a></li>
             <li><a href="#contact">Kontakt</a></li>
         </ul>
-        <button class="nav-toggle" aria-label="Menu">&#9776;</button>
+        <div class="nav-right">
+            <button class="theme-toggle" id="themeToggle" aria-label="Zmien motyw">
+                <span class="theme-icon-dark">&#9790;</span>
+                <span class="theme-icon-light">&#9728;</span>
+            </button>
+            <button class="nav-toggle" aria-label="Menu">&#9776;</button>
+        </div>
     </nav>
 
     <!-- Hero -->
     <section id="home" class="hero">
+        <div class="hero-bg">
+            <div class="hero-shape hero-shape-1"></div>
+            <div class="hero-shape hero-shape-2"></div>
+            <div class="hero-shape hero-shape-3"></div>
+        </div>
+        <canvas id="particleCanvas"></canvas>
         <div class="hero-content">
             <p class="hero-greeting">Czesc, jestem</p>
             <h1 class="hero-name">Kacper</h1>
-            <p class="hero-title">Junior Developer</p>
+            <p class="hero-title">
+                <span id="typewriter"></span><span class="cursor">|</span>
+            </p>
             <p class="hero-desc">Tworze aplikacje webowe i szukam nowych wyzwan. Chetnie pomoge Ci z Twoim projektem.</p>
             <div class="hero-buttons">
                 <a href="#projects" class="btn btn-primary">Moje projekty</a>
                 <a href="#contact" class="btn btn-outline">Napisz do mnie</a>
             </div>
         </div>
+        <a href="#about" class="scroll-indicator" aria-label="Przewin w dol">
+            <div class="scroll-arrow"></div>
+        </a>
     </section>
 
     <!-- O mnie -->
@@ -51,15 +83,18 @@
                     <p>Szukam zlecen freelance oraz mozliwosci wspolpracy przy ciekawych projektach. Jestem otwarty na nauke nowych technologii i chetnie podejmuje sie wyzwan.</p>
                     <div class="about-stats">
                         <div class="stat">
-                            <span class="stat-number">5+</span>
+                            <span class="stat-number" data-target="5">0</span>
+                            <span class="stat-suffix">+</span>
                             <span class="stat-label">Projektow</span>
                         </div>
                         <div class="stat">
-                            <span class="stat-number">1+</span>
+                            <span class="stat-number" data-target="1">0</span>
+                            <span class="stat-suffix">+</span>
                             <span class="stat-label">Lat nauki</span>
                         </div>
                         <div class="stat">
-                            <span class="stat-number">100%</span>
+                            <span class="stat-number" data-target="100">0</span>
+                            <span class="stat-suffix">%</span>
                             <span class="stat-label">Zaangazowania</span>
                         </div>
                     </div>
@@ -74,34 +109,46 @@
             <h2 class="section-title">Umiejetnosci</h2>
             <div class="skills-grid">
                 <div class="skill-card">
-                    <div class="skill-icon">&#60;/&#62;</div>
+                    <div class="skill-icon">&lt;/&gt;</div>
                     <h3>HTML & CSS</h3>
                     <p>Responsywne strony, Flexbox, Grid, animacje CSS</p>
+                    <div class="skill-bar"><div class="skill-progress" data-width="80"></div></div>
+                    <span class="skill-percent">80%</span>
                 </div>
                 <div class="skill-card">
                     <div class="skill-icon">JS</div>
                     <h3>JavaScript</h3>
                     <p>ES6+, DOM, API, programowanie asynchroniczne</p>
+                    <div class="skill-bar"><div class="skill-progress" data-width="65"></div></div>
+                    <span class="skill-percent">65%</span>
                 </div>
                 <div class="skill-card">
                     <div class="skill-icon">Py</div>
                     <h3>Python</h3>
                     <p>Skrypty, automatyzacja, podstawy backendu</p>
+                    <div class="skill-bar"><div class="skill-progress" data-width="50"></div></div>
+                    <span class="skill-percent">50%</span>
                 </div>
                 <div class="skill-card">
                     <div class="skill-icon">Git</div>
                     <h3>Git & GitHub</h3>
                     <p>Kontrola wersji, wspolpraca, CI/CD</p>
+                    <div class="skill-bar"><div class="skill-progress" data-width="70"></div></div>
+                    <span class="skill-percent">70%</span>
                 </div>
                 <div class="skill-card">
                     <div class="skill-icon">DB</div>
                     <h3>Bazy danych</h3>
                     <p>SQL, podstawy NoSQL, modelowanie danych</p>
+                    <div class="skill-bar"><div class="skill-progress" data-width="45"></div></div>
+                    <span class="skill-percent">45%</span>
                 </div>
                 <div class="skill-card">
                     <div class="skill-icon">+</div>
                     <h3>I wiecej...</h3>
                     <p>Chetnie ucze sie nowych technologii pod projekt</p>
+                    <div class="skill-bar"><div class="skill-progress growing" data-width="100"></div></div>
+                    <span class="skill-percent">...</span>
                 </div>
             </div>
         </div>
@@ -113,7 +160,10 @@
             <h2 class="section-title">Projekty</h2>
             <div class="projects-grid">
                 <div class="project-card">
-                    <div class="project-image" style="background: linear-gradient(135deg, #6c5ce7, #00b894);">Lista Zadan</div>
+                    <div class="project-image" style="background: linear-gradient(135deg, #6c5ce7, #00b894);">
+                        <span class="project-emoji">&#10003;</span>
+                        <span>Lista Zadan</span>
+                    </div>
                     <div class="project-info">
                         <h3>Aplikacja To-Do</h3>
                         <p>Interaktywna lista zadan z filtrami, lokalnym zapisem i statystykami ukonczenia.</p>
@@ -124,13 +174,16 @@
                             <span>LocalStorage</span>
                         </div>
                         <div class="project-links">
-                            <a href="projects/todo/index.html" class="btn btn-small">Demo</a>
-                            <a href="https://github.com/Zakiz17/Zakiz17.github.io/tree/main/projects/todo" class="btn btn-small btn-outline">GitHub</a>
+                            <a href="projects/todo/index.html" class="btn btn-small btn-primary">Demo</a>
+                            <a href="https://github.com/Zakiz17/Zakiz17.github.io/tree/main/projects/todo" class="btn btn-small btn-outline" target="_blank" rel="noopener">GitHub</a>
                         </div>
                     </div>
                 </div>
                 <div class="project-card">
-                    <div class="project-image" style="background: linear-gradient(135deg, #a29bfe, #6c5ce7);">Kalkulator</div>
+                    <div class="project-image" style="background: linear-gradient(135deg, #a29bfe, #6c5ce7);">
+                        <span class="project-emoji">&#128290;</span>
+                        <span>Kalkulator</span>
+                    </div>
                     <div class="project-info">
                         <h3>Kalkulator</h3>
                         <p>W pelni funkcjonalny kalkulator z obsluga klawiatury i historia obliczen.</p>
@@ -140,13 +193,16 @@
                             <span>Events</span>
                         </div>
                         <div class="project-links">
-                            <a href="projects/calculator/index.html" class="btn btn-small">Demo</a>
-                            <a href="https://github.com/Zakiz17/Zakiz17.github.io/tree/main/projects/calculator" class="btn btn-small btn-outline">GitHub</a>
+                            <a href="projects/calculator/index.html" class="btn btn-small btn-primary">Demo</a>
+                            <a href="https://github.com/Zakiz17/Zakiz17.github.io/tree/main/projects/calculator" class="btn btn-small btn-outline" target="_blank" rel="noopener">GitHub</a>
                         </div>
                     </div>
                 </div>
                 <div class="project-card">
-                    <div class="project-image" style="background: linear-gradient(135deg, #00b894, #00cec9);">Quiz IT</div>
+                    <div class="project-image" style="background: linear-gradient(135deg, #00b894, #00cec9);">
+                        <span class="project-emoji">&#128161;</span>
+                        <span>Quiz IT</span>
+                    </div>
                     <div class="project-info">
                         <h3>Quiz Programistyczny</h3>
                         <p>Interaktywny quiz z 10 pytaniami o programowaniu, paskiem postepu i wynikami.</p>
@@ -156,9 +212,50 @@
                             <span>UX Design</span>
                         </div>
                         <div class="project-links">
-                            <a href="projects/quiz/index.html" class="btn btn-small">Demo</a>
-                            <a href="https://github.com/Zakiz17/Zakiz17.github.io/tree/main/projects/quiz" class="btn btn-small btn-outline">GitHub</a>
+                            <a href="projects/quiz/index.html" class="btn btn-small btn-primary">Demo</a>
+                            <a href="https://github.com/Zakiz17/Zakiz17.github.io/tree/main/projects/quiz" class="btn btn-small btn-outline" target="_blank" rel="noopener">GitHub</a>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Moja Droga -->
+    <section id="timeline" class="section section-dark">
+        <div class="container">
+            <h2 class="section-title">Moja Droga</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">2025</span>
+                        <h3>Poczatek przygody</h3>
+                        <p>Rozpoczalem nauke programowania od podstaw HTML i CSS. Stworzylem swoje pierwsze proste strony internetowe.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">2025</span>
+                        <h3>JavaScript i logika</h3>
+                        <p>Zanurzylem sie w JavaScript — nauka DOM, eventow, ES6+. Pierwsze interaktywne projekty: kalkulator, quiz.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">2026</span>
+                        <h3>Portfolio i Git</h3>
+                        <p>Stworzylem profesjonalne portfolio, nauczylem sie Git i GitHub. Wdrozylem strone na GitHub Pages.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">2026</span>
+                        <h3>Freelancing</h3>
+                        <p>Start przygody z freelancingiem. Szukam pierwszych zlecen i rozwijam umiejetnosci pod realne projekty.</p>
                     </div>
                 </div>
             </div>
@@ -171,17 +268,17 @@
             <h2 class="section-title">Zatrudnij mnie</h2>
             <p class="hire-desc">Szukasz developera do projektu? Znajdziesz mnie na tych platformach:</p>
             <div class="hire-grid">
-                <a href="https://useme.com/" target="_blank" class="hire-card">
+                <a href="https://useme.com/" target="_blank" rel="noopener" class="hire-card">
                     <div class="hire-icon">PL</div>
                     <h3>Useme</h3>
                     <p>Polska platforma freelancingowa</p>
                 </a>
-                <a href="https://www.fiverr.com/" target="_blank" class="hire-card">
+                <a href="https://www.fiverr.com/" target="_blank" rel="noopener" class="hire-card">
                     <div class="hire-icon">Fi</div>
                     <h3>Fiverr</h3>
                     <p>Miedzynarodowa gieda zlecen</p>
                 </a>
-                <a href="https://www.upwork.com/" target="_blank" class="hire-card">
+                <a href="https://www.upwork.com/" target="_blank" rel="noopener" class="hire-card">
                     <div class="hire-icon">Up</div>
                     <h3>Upwork</h3>
                     <p>Najwieksza platforma freelance</p>
@@ -201,15 +298,33 @@
             <h2 class="section-title">Kontakt</h2>
             <div class="contact-content">
                 <p class="contact-desc">Masz pomysl na projekt? Szukasz developera? Napisz do mnie!</p>
-                <form class="contact-form" id="contactForm">
-                    <input type="text" name="name" placeholder="Twoje imie" required>
-                    <input type="email" name="email" placeholder="Twoj email" required>
-                    <textarea name="message" placeholder="Twoja wiadomosc..." rows="5" required></textarea>
-                    <button type="submit" class="btn btn-primary">Wyslij wiadomosc</button>
+                <form class="contact-form" id="contactForm" novalidate>
+                    <div class="form-group">
+                        <input type="text" name="name" id="nameInput" placeholder=" " required>
+                        <label for="nameInput">Twoje imie</label>
+                        <span class="form-error">Wpisz swoje imie</span>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" id="emailInput" placeholder=" " required>
+                        <label for="emailInput">Twoj email</label>
+                        <span class="form-error">Wpisz poprawny email</span>
+                    </div>
+                    <div class="form-group">
+                        <textarea name="message" id="messageInput" placeholder=" " rows="5" required></textarea>
+                        <label for="messageInput">Twoja wiadomosc...</label>
+                        <span class="form-error">Wpisz wiadomosc</span>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-submit">
+                        <span class="btn-text">Wyslij wiadomosc</span>
+                    </button>
                 </form>
+                <div id="formSuccess" class="form-success" hidden>
+                    <div class="success-checkmark">&#10004;</div>
+                    <p>Dzieki za wiadomosc! Odpowiem jak najszybciej.</p>
+                </div>
                 <div class="contact-links">
-                    <a href="https://github.com/Zakiz17" target="_blank">GitHub</a>
-                    <a href="https://linkedin.com/in/Zakiz17" target="_blank">LinkedIn</a>
+                    <a href="https://github.com/Zakiz17" target="_blank" rel="noopener">GitHub</a>
+                    <a href="https://www.linkedin.com/in/Zakiz17" target="_blank" rel="noopener">LinkedIn</a>
                     <a href="mailto:kacper200619@gmail.com">Email</a>
                 </div>
             </div>
@@ -218,8 +333,21 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2026 Kacper. Wszystkie prawa zastrzezone.</p>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">Kacper<span class="accent">.</span></div>
+                <div class="footer-links">
+                    <a href="https://github.com/Zakiz17" target="_blank" rel="noopener">GitHub</a>
+                    <a href="https://www.linkedin.com/in/Zakiz17" target="_blank" rel="noopener">LinkedIn</a>
+                    <a href="mailto:kacper200619@gmail.com">Email</a>
+                </div>
+                <p class="footer-copy">&copy; 2026 Kacper. Wszystkie prawa zastrzezone.</p>
+            </div>
+        </div>
     </footer>
+
+    <!-- Scroll to top -->
+    <button id="scrollTop" class="scroll-top" aria-label="Przewin do gory">&#8593;</button>
 
     <script src="script.js"></script>
 </body>
