@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pl" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kolko i Krzyzyk — Kacper</title>
+    <style>
+        :root[data-theme="dark"] {
+            --bg: #0f0f1a;
+            --bg-card: #1a1a2e;
+            --bg-input: #16213e;
+            --border: #2a2a4a;
+            --text: #e0e0e0;
+            --text-muted: #8888aa;
+            --accent: #6c5ce7;
+            --accent-hover: #a29bfe;
+            --toggle-bg: #2a2a4a;
+            --shadow: rgba(0,0,0,0.3);
+            --x-color: #ff6b6b;
+            --o-color: #74b9ff;
+            --win-line: #00b894;
+        }
+        :root[data-theme="light"] {
+            --bg: #f0f2f5;
+            --bg-card: #ffffff;
+            --bg-input: #f8f9fa;
+            --border: #ddd;
+            --text: #1a1a2e;
+            --text-muted: #666;
+            --accent: #6c5ce7;
+            --accent-hover: #5a4bd1;
+            --toggle-bg: #ddd;
+            --shadow: rgba(0,0,0,0.1);
+            --x-color: #e74c3c;
+            --o-color: #0984e3;
+            --win-line: #00b894;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .app {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 420px;
+            margin: 1rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 32px var(--shadow);
+            transition: background 0.3s, border-color 0.3s;
+            text-align: center;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+
+        .app-header h1 { font-size: 1.3rem; color: var(--accent); }
+
+        .theme-toggle {
+            background: var(--toggle-bg);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .theme-toggle:hover { transform: scale(1.1); }
+        [data-theme="dark"] .icon-light { display: none; }
+        [data-theme="dark"] .icon-dark { display: inline; }
+        [data-theme="light"] .icon-light { display: inline; }
+        [data-theme="light"] .icon-dark { display: none; }
+
+        /* Score */
+        .score-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .score-box {
+            flex: 1;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.5rem;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .score-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; }
+        .score-num { font-size: 1.4rem; font-weight: 800; }
+        .score-x { color: var(--x-color); }
+        .score-o { color: var(--o-color); }
+
+        /* Difficulty */
+        .diff-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            justify-content: center;
+        }
+
+        .diff-btn {
+            padding: 0.4rem 0.8rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            border-radius: 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .diff-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        /* Status */
+        .status {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            min-height: 1.5rem;
+        }
+
+        /* Board */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            max-width: 320px;
+            margin: 0 auto 1.25rem;
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            background: var(--bg-input);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .cell:hover:not(.taken) {
+            border-color: var(--accent);
+            transform: scale(1.03);
+        }
+
+        .cell.taken { cursor: default; }
+        .cell.x { color: var(--x-color); }
+        .cell.o { color: var(--o-color); }
+
+        .cell.win-cell {
+            border-color: var(--win-line);
+            background: rgba(0,184,148,0.1);
+            animation: winPulse 0.6s ease;
+        }
+
+        @keyframes winPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        /* Buttons */
+        .btn-row {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        .btn-outline:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
+
+        .back-link {
+            display: block;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+        .back-link:hover { color: var(--accent); }
+
+        @media (max-width: 400px) {
+            .app { padding: 1.25rem; margin: 0.5rem; }
+            .cell { font-size: 2.2rem; border-radius: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="app-header">
+            <h1>Kolko i Krzyzyk</h1>
+            <button class="theme-toggle" id="themeToggle">
+                <span class="icon-dark">&#9790;</span>
+                <span class="icon-light">&#9728;</span>
+            </button>
+        </div>
+
+        <div class="score-bar">
+            <div class="score-box">
+                <div class="score-label">Ty (X)</div>
+                <div class="score-num score-x" id="scoreX">0</div>
+            </div>
+            <div class="score-box">
+                <div class="score-label">Remis</div>
+                <div class="score-num" id="scoreDraw">0</div>
+            </div>
+            <div class="score-box">
+                <div class="score-label">AI (O)</div>
+                <div class="score-num score-o" id="scoreO">0</div>
+            </div>
+        </div>
+
+        <div class="diff-row">
+            <button class="diff-btn" data-diff="easy">Latwy</button>
+            <button class="diff-btn active" data-diff="medium">Sredni</button>
+            <button class="diff-btn" data-diff="hard">Trudny</button>
+        </div>
+
+        <div class="status" id="status">Twoj ruch!</div>
+
+        <div class="board" id="board"></div>
+
+        <div class="btn-row">
+            <button class="btn" id="newGame">Nowa gra</button>
+            <button class="btn btn-outline" id="resetScore">Reset wyniku</button>
+        </div>
+
+        <a href="../../index.html" class="back-link">&larr; Powrot do portfolio</a>
+    </div>
+
+    <script>
+        let board = Array(9).fill(null);
+        let gameOver = false;
+        let difficulty = 'medium';
+        let scores = { x: 0, o: 0, draw: 0 };
+
+        const WINS = [
+            [0,1,2],[3,4,5],[6,7,8],
+            [0,3,6],[1,4,7],[2,5,8],
+            [0,4,8],[2,4,6]
+        ];
+
+        const boardEl = document.getElementById('board');
+        const statusEl = document.getElementById('status');
+        const scoreXEl = document.getElementById('scoreX');
+        const scoreOEl = document.getElementById('scoreO');
+        const scoreDrawEl = document.getElementById('scoreDraw');
+
+        // Theme
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('ttt-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeToggle.addEventListener('click', () => {
+            const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('ttt-theme', next);
+        });
+
+        // Difficulty
+        document.querySelectorAll('.diff-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                difficulty = btn.dataset.diff;
+                resetGame();
+            });
+        });
+
+        // Load scores
+        function loadScores() {
+            try { scores = JSON.parse(localStorage.getItem('ttt-scores')) || { x:0, o:0, draw:0 }; }
+            catch { scores = { x:0, o:0, draw:0 }; }
+            updateScoreDisplay();
+        }
+
+        function saveScores() {
+            localStorage.setItem('ttt-scores', JSON.stringify(scores));
+        }
+
+        function updateScoreDisplay() {
+            scoreXEl.textContent = scores.x;
+            scoreOEl.textContent = scores.o;
+            scoreDrawEl.textContent = scores.draw;
+        }
+
+        // Render
+        function render() {
+            boardEl.innerHTML = board.map((cell, i) => {
+                const cls = cell ? `cell taken ${cell}` : 'cell';
+                const text = cell === 'x' ? 'X' : cell === 'o' ? 'O' : '';
+                return `<div class="${cls}" data-i="${i}">${text}</div>`;
+            }).join('');
+
+            boardEl.querySelectorAll('.cell').forEach(el => {
+                el.addEventListener('click', () => handleClick(parseInt(el.dataset.i)));
+            });
+        }
+
+        function handleClick(i) {
+            if (board[i] || gameOver) return;
+
+            board[i] = 'x';
+            render();
+
+            const winX = checkWin('x');
+            if (winX) { endGame('Wygrales!', winX, 'x'); return; }
+            if (board.every(c => c)) { endGame('Remis!', null, 'draw'); return; }
+
+            statusEl.textContent = 'AI mysli...';
+            setTimeout(() => {
+                aiMove();
+                render();
+                const winO = checkWin('o');
+                if (winO) { endGame('AI wygrywa!', winO, 'o'); return; }
+                if (board.every(c => c)) { endGame('Remis!', null, 'draw'); return; }
+                statusEl.textContent = 'Twoj ruch!';
+            }, 300);
+        }
+
+        function checkWin(player) {
+            for (const combo of WINS) {
+                if (combo.every(i => board[i] === player)) return combo;
+            }
+            return null;
+        }
+
+        function endGame(msg, winCombo, winner) {
+            gameOver = true;
+            statusEl.textContent = msg;
+
+            if (winCombo) {
+                winCombo.forEach(i => {
+                    boardEl.children[i].classList.add('win-cell');
+                });
+            }
+
+            if (winner === 'draw') scores.draw++;
+            else scores[winner]++;
+            saveScores();
+            updateScoreDisplay();
+        }
+
+        // AI
+        function aiMove() {
+            if (difficulty === 'easy') aiEasy();
+            else if (difficulty === 'medium') aiMedium();
+            else aiHard();
+        }
+
+        function aiEasy() {
+            const empty = board.map((c, i) => c ? null : i).filter(i => i !== null);
+            board[empty[Math.floor(Math.random() * empty.length)]] = 'o';
+        }
+
+        function aiMedium() {
+            if (Math.random() < 0.6) aiHard();
+            else aiEasy();
+        }
+
+        function aiHard() {
+            let bestScore = -Infinity;
+            let bestMove = -1;
+
+            for (let i = 0; i < 9; i++) {
+                if (board[i]) continue;
+                board[i] = 'o';
+                const score = minimax(board, false);
+                board[i] = null;
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = i;
+                }
+            }
+
+            if (bestMove >= 0) board[bestMove] = 'o';
+        }
+
+        function minimax(b, isMax) {
+            const winO = checkWin('o');
+            const winX = checkWin('x');
+            if (winO) return 10;
+            if (winX) return -10;
+            if (b.every(c => c)) return 0;
+
+            if (isMax) {
+                let best = -Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (b[i]) continue;
+                    b[i] = 'o';
+                    best = Math.max(best, minimax(b, false));
+                    b[i] = null;
+                }
+                return best;
+            } else {
+                let best = Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (b[i]) continue;
+                    b[i] = 'x';
+                    best = Math.min(best, minimax(b, true));
+                    b[i] = null;
+                }
+                return best;
+            }
+        }
+
+        function resetGame() {
+            board = Array(9).fill(null);
+            gameOver = false;
+            statusEl.textContent = 'Twoj ruch!';
+            render();
+        }
+
+        document.getElementById('newGame').addEventListener('click', resetGame);
+        document.getElementById('resetScore').addEventListener('click', () => {
+            scores = { x: 0, o: 0, draw: 0 };
+            saveScores();
+            updateScoreDisplay();
+            resetGame();
+        });
+
+        loadScores();
+        render();
+    </script>
+</body>
+</html>

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pl" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wisielec — Kacper</title>
+    <style>
+        :root[data-theme="dark"] {
+            --bg: #0f0f1a;
+            --bg-card: #1a1a2e;
+            --bg-input: #16213e;
+            --border: #2a2a4a;
+            --text: #e0e0e0;
+            --text-muted: #8888aa;
+            --accent: #6c5ce7;
+            --accent-hover: #a29bfe;
+            --toggle-bg: #2a2a4a;
+            --shadow: rgba(0,0,0,0.3);
+            --hang-color: #e0e0e0;
+            --correct: #00b894;
+            --wrong: #e74c3c;
+        }
+        :root[data-theme="light"] {
+            --bg: #f0f2f5;
+            --bg-card: #ffffff;
+            --bg-input: #f8f9fa;
+            --border: #ddd;
+            --text: #1a1a2e;
+            --text-muted: #666;
+            --accent: #6c5ce7;
+            --accent-hover: #5a4bd1;
+            --toggle-bg: #ddd;
+            --shadow: rgba(0,0,0,0.1);
+            --hang-color: #333;
+            --correct: #00b894;
+            --wrong: #e74c3c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .app {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 480px;
+            margin: 1rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 32px var(--shadow);
+            transition: background 0.3s, border-color 0.3s;
+            text-align: center;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .app-header h1 { font-size: 1.4rem; color: var(--accent); }
+
+        .header-right { display: flex; gap: 0.5rem; align-items: center; }
+
+        .theme-toggle {
+            background: var(--toggle-bg);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .theme-toggle:hover { transform: scale(1.1); }
+        [data-theme="dark"] .icon-light { display: none; }
+        [data-theme="dark"] .icon-dark { display: inline; }
+        [data-theme="light"] .icon-light { display: inline; }
+        [data-theme="light"] .icon-dark { display: none; }
+
+        /* Stats */
+        .stats {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-box {
+            flex: 1;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.5rem;
+            transition: background 0.3s;
+        }
+
+        .stat-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; }
+        .stat-value { font-size: 1.2rem; font-weight: 800; }
+        .stat-wins { color: var(--correct); }
+        .stat-losses { color: var(--wrong); }
+
+        /* Category */
+        .category {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Canvas */
+        .canvas-wrap {
+            margin: 0 auto 1rem;
+            width: 200px;
+            height: 200px;
+        }
+
+        canvas { display: block; }
+
+        /* Word display */
+        .word-display {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .letter-slot {
+            width: 36px;
+            height: 44px;
+            border-bottom: 3px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            transition: border-color 0.3s;
+        }
+
+        .letter-slot.revealed { border-color: var(--correct); color: var(--correct); }
+        .letter-slot.wrong-reveal { border-color: var(--wrong); color: var(--wrong); }
+
+        /* Keyboard */
+        .keyboard {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .key {
+            width: 36px;
+            height: 40px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .key:hover:not(:disabled) { border-color: var(--accent); background: var(--accent); color: white; }
+        .key:disabled { opacity: 0.3; cursor: default; }
+        .key.correct { background: var(--correct); border-color: var(--correct); color: white; }
+        .key.wrong { background: var(--wrong); border-color: var(--wrong); color: white; }
+
+        /* Message */
+        .message {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            min-height: 1.5rem;
+        }
+
+        .message.win { color: var(--correct); }
+        .message.lose { color: var(--wrong); }
+
+        /* Buttons */
+        .btn {
+            padding: 0.65rem 1.8rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            margin-bottom: 1rem;
+        }
+        .btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+        .back-link {
+            display: block;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+        .back-link:hover { color: var(--accent); }
+
+        @media (max-width: 400px) {
+            .app { padding: 1.25rem; margin: 0.5rem; }
+            .key { width: 30px; height: 34px; font-size: 0.8rem; }
+            .letter-slot { width: 28px; height: 36px; font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="app-header">
+            <h1>Wisielec</h1>
+            <div class="header-right">
+                <button class="theme-toggle" id="themeToggle">
+                    <span class="icon-dark">&#9790;</span>
+                    <span class="icon-light">&#9728;</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">Wygrane</div>
+                <div class="stat-value stat-wins" id="wins">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Przegrane</div>
+                <div class="stat-value stat-losses" id="losses">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Zycia</div>
+                <div class="stat-value" id="lives">6</div>
+            </div>
+        </div>
+
+        <div class="category" id="category"></div>
+
+        <div class="canvas-wrap">
+            <canvas id="hangCanvas" width="200" height="200"></canvas>
+        </div>
+
+        <div class="word-display" id="wordDisplay"></div>
+        <div class="message" id="message"></div>
+        <div class="keyboard" id="keyboard"></div>
+
+        <button class="btn" id="newGame">Nowe slowo</button>
+        <a href="../../index.html" class="back-link">&larr; Powrot do portfolio</a>
+    </div>
+
+    <script>
+        const WORDS = [
+            { word: 'PROGRAMOWANIE', cat: 'IT' },
+            { word: 'JAVASCRIPT', cat: 'Jezyk' },
+            { word: 'KOMPUTER', cat: 'Sprzet' },
+            { word: 'INTERNET', cat: 'Technologia' },
+            { word: 'ALGORYTM', cat: 'IT' },
+            { word: 'KLAWIATURA', cat: 'Sprzet' },
+            { word: 'FUNKCJA', cat: 'Programowanie' },
+            { word: 'PRZEGLARKA', cat: 'Internet' },
+            { word: 'TABLICA', cat: 'Programowanie' },
+            { word: 'MONITOR', cat: 'Sprzet' },
+            { word: 'SERWER', cat: 'IT' },
+            { word: 'BINARNY', cat: 'Informatyka' },
+            { word: 'PROCESOR', cat: 'Sprzet' },
+            { word: 'OBIEKT', cat: 'Programowanie' },
+            { word: 'ZMIENNA', cat: 'Programowanie' },
+            { word: 'REKURENCJA', cat: 'Algorytmy' },
+            { word: 'TERMINAL', cat: 'Narzedzia' },
+            { word: 'FRONTEND', cat: 'Web Dev' },
+            { word: 'BACKEND', cat: 'Web Dev' },
+            { word: 'DEBUGGER', cat: 'Narzedzia' },
+            { word: 'PIKSEL', cat: 'Grafika' },
+            { word: 'DOMENA', cat: 'Internet' },
+            { word: 'HOSTING', cat: 'Internet' },
+            { word: 'FRAMEWORK', cat: 'Programowanie' },
+            { word: 'RESPONSYWNY', cat: 'Web Dev' },
+        ];
+
+        const LETTERS = 'AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻ';
+        const MAX_LIVES = 6;
+
+        let currentWord = '';
+        let currentCat = '';
+        let guessed = new Set();
+        let wrongCount = 0;
+        let gameActive = false;
+        let wins = parseInt(localStorage.getItem('hang-wins')) || 0;
+        let losses = parseInt(localStorage.getItem('hang-losses')) || 0;
+
+        const canvas = document.getElementById('hangCanvas');
+        const ctx = canvas.getContext('2d');
+        const wordDisplay = document.getElementById('wordDisplay');
+        const keyboardEl = document.getElementById('keyboard');
+        const messageEl = document.getElementById('message');
+        const categoryEl = document.getElementById('category');
+        const winsEl = document.getElementById('wins');
+        const lossesEl = document.getElementById('losses');
+        const livesEl = document.getElementById('lives');
+
+        // Theme
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('hang-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeToggle.addEventListener('click', () => {
+            const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('hang-theme', next);
+            drawHangman();
+        });
+
+        function getColor() {
+            return getComputedStyle(document.documentElement).getPropertyValue('--hang-color').trim();
+        }
+
+        // Draw hangman
+        function drawHangman() {
+            ctx.clearRect(0, 0, 200, 200);
+            ctx.strokeStyle = getColor();
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+
+            // Base
+            ctx.beginPath(); ctx.moveTo(20, 180); ctx.lineTo(80, 180); ctx.stroke();
+            // Pole
+            ctx.beginPath(); ctx.moveTo(50, 180); ctx.lineTo(50, 20); ctx.stroke();
+            // Top
+            ctx.beginPath(); ctx.moveTo(50, 20); ctx.lineTo(140, 20); ctx.stroke();
+            // Rope
+            ctx.beginPath(); ctx.moveTo(140, 20); ctx.lineTo(140, 45); ctx.stroke();
+
+            if (wrongCount >= 1) { // Head
+                ctx.beginPath(); ctx.arc(140, 60, 15, 0, Math.PI * 2); ctx.stroke();
+            }
+            if (wrongCount >= 2) { // Body
+                ctx.beginPath(); ctx.moveTo(140, 75); ctx.lineTo(140, 125); ctx.stroke();
+            }
+            if (wrongCount >= 3) { // Left arm
+                ctx.beginPath(); ctx.moveTo(140, 90); ctx.lineTo(115, 110); ctx.stroke();
+            }
+            if (wrongCount >= 4) { // Right arm
+                ctx.beginPath(); ctx.moveTo(140, 90); ctx.lineTo(165, 110); ctx.stroke();
+            }
+            if (wrongCount >= 5) { // Left leg
+                ctx.beginPath(); ctx.moveTo(140, 125); ctx.lineTo(115, 155); ctx.stroke();
+            }
+            if (wrongCount >= 6) { // Right leg
+                ctx.beginPath(); ctx.moveTo(140, 125); ctx.lineTo(165, 155); ctx.stroke();
+                // Dead face
+                ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(133, 55); ctx.lineTo(139, 61); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(139, 55); ctx.lineTo(133, 61); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(141, 55); ctx.lineTo(147, 61); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(147, 55); ctx.lineTo(141, 61); ctx.stroke();
+            }
+        }
+
+        // Render word
+        function renderWord() {
+            wordDisplay.innerHTML = currentWord.split('').map(letter => {
+                const show = guessed.has(letter);
+                const cls = gameActive ? (show ? 'letter-slot revealed' : 'letter-slot') :
+                    (show ? 'letter-slot revealed' : 'letter-slot wrong-reveal');
+                return `<div class="${cls}">${show || !gameActive ? letter : ''}</div>`;
+            }).join('');
+        }
+
+        // Render keyboard
+        function renderKeyboard() {
+            keyboardEl.innerHTML = LETTERS.split('').map(l => {
+                const used = guessed.has(l);
+                const inWord = currentWord.includes(l);
+                let cls = 'key';
+                if (used) cls += inWord ? ' correct' : ' wrong';
+                return `<button class="${cls}" data-l="${l}" ${used || !gameActive ? 'disabled' : ''}>${l}</button>`;
+            }).join('');
+
+            keyboardEl.querySelectorAll('.key').forEach(btn => {
+                btn.addEventListener('click', () => guess(btn.dataset.l));
+            });
+        }
+
+        function guess(letter) {
+            if (!gameActive || guessed.has(letter)) return;
+            guessed.add(letter);
+
+            if (!currentWord.includes(letter)) {
+                wrongCount++;
+                drawHangman();
+            }
+
+            livesEl.textContent = MAX_LIVES - wrongCount;
+
+            if (wrongCount >= MAX_LIVES) {
+                gameActive = false;
+                losses++;
+                localStorage.setItem('hang-losses', losses);
+                lossesEl.textContent = losses;
+                messageEl.textContent = 'Przegrales! Slowo: ' + currentWord;
+                messageEl.className = 'message lose';
+            } else if (currentWord.split('').every(l => guessed.has(l))) {
+                gameActive = false;
+                wins++;
+                localStorage.setItem('hang-wins', wins);
+                winsEl.textContent = wins;
+                messageEl.textContent = 'Brawo! Zgadles!';
+                messageEl.className = 'message win';
+            }
+
+            renderWord();
+            renderKeyboard();
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            const l = e.key.toUpperCase();
+            if (LETTERS.includes(l) && gameActive) {
+                guess(l);
+            }
+        });
+
+        function newGame() {
+            const entry = WORDS[Math.floor(Math.random() * WORDS.length)];
+            currentWord = entry.word;
+            currentCat = entry.cat;
+            guessed = new Set();
+            wrongCount = 0;
+            gameActive = true;
+            messageEl.textContent = '';
+            messageEl.className = 'message';
+            categoryEl.textContent = 'Kategoria: ' + currentCat;
+            livesEl.textContent = MAX_LIVES;
+            drawHangman();
+            renderWord();
+            renderKeyboard();
+        }
+
+        document.getElementById('newGame').addEventListener('click', newGame);
+
+        // Init
+        winsEl.textContent = wins;
+        lossesEl.textContent = losses;
+        newGame();
+    </script>
+</body>
+</html>
