@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pl" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centrum Gier — Kacper</title>
+    <style>
+        :root[data-theme="dark"] {
+            --bg: #0f0f1a;
+            --bg-card: #1a1a2e;
+            --bg-input: #16213e;
+            --border: #2a2a4a;
+            --text: #e0e0e0;
+            --text-muted: #8888aa;
+            --accent: #6c5ce7;
+            --accent-hover: #a29bfe;
+            --accent-glow: rgba(108,92,231,0.2);
+            --toggle-bg: #2a2a4a;
+            --shadow: rgba(0,0,0,0.3);
+        }
+        :root[data-theme="light"] {
+            --bg: #f0f2f5;
+            --bg-card: #ffffff;
+            --bg-input: #f8f9fa;
+            --border: #ddd;
+            --text: #1a1a2e;
+            --text-muted: #666;
+            --accent: #6c5ce7;
+            --accent-hover: #5a4bd1;
+            --accent-glow: rgba(108,92,231,0.1);
+            --toggle-bg: #ddd;
+            --shadow: rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 900;
+        }
+
+        .header h1 span { color: var(--accent); }
+
+        .header-right {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: var(--toggle-bg);
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .theme-toggle:hover { transform: scale(1.1); }
+        [data-theme="dark"] .icon-light { display: none; }
+        [data-theme="dark"] .icon-dark { display: inline; }
+        [data-theme="light"] .icon-light { display: inline; }
+        [data-theme="light"] .icon-dark { display: none; }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Games grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .game-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px var(--shadow);
+            border-color: var(--accent);
+        }
+
+        .game-thumb {
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-thumb::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .game-card:hover .game-thumb::after { opacity: 1; }
+
+        .game-info {
+            padding: 1.25rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-info h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+
+        .game-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .game-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-top: 0.75rem;
+        }
+
+        .game-tags span {
+            padding: 0.2rem 0.6rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .play-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.75rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent);
+            transition: background 0.2s;
+        }
+
+        .game-card:hover .play-label {
+            background: var(--accent-glow);
+        }
+
+        /* Back link */
+        .back-link {
+            display: block;
+            text-align: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover { color: var(--accent); }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .container { padding: 1.25rem 1rem; }
+            .header h1 { font-size: 1.5rem; }
+            .games-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+            .game-thumb { height: 100px; font-size: 2.5rem; }
+            .game-info { padding: 0.85rem; }
+            .game-info h3 { font-size: 0.95rem; }
+            .game-info p { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><span>&#127918;</span> Centrum Gier</h1>
+            <div class="header-right">
+                <button class="theme-toggle" id="themeToggle">
+                    <span class="icon-dark">&#9790;</span>
+                    <span class="icon-light">&#9728;</span>
+                </button>
+            </div>
+        </div>
+        <p class="subtitle">Wybierz gre i baw sie dobrze! Wszystkie napisane w czystym JavaScript.</p>
+
+        <div class="games-grid">
+            <a href="../snake/index.html" class="game-card">
+                <div class="game-thumb" style="background: linear-gradient(135deg, #00b894, #fdcb6e);">
+                    &#128013;
+                </div>
+                <div class="game-info">
+                    <h3>Snake</h3>
+                    <p>Klasyczny waz — zbieraj jedzenie i nie uderz w sciane ani w siebie!</p>
+                    <div class="game-tags">
+                        <span>Canvas</span>
+                        <span>3 predkosci</span>
+                        <span>Dotyk</span>
+                    </div>
+                </div>
+                <div class="play-label">&#9654; Graj</div>
+            </a>
+
+            <a href="../memory/index.html" class="game-card">
+                <div class="game-thumb" style="background: linear-gradient(135deg, #a29bfe, #fd79a8);">
+                    &#127183;
+                </div>
+                <div class="game-info">
+                    <h3>Memory</h3>
+                    <p>Odkrywaj pary kart i trenuj pamiec. Animacje 3D i timer.</p>
+                    <div class="game-tags">
+                        <span>CSS 3D</span>
+                        <span>3 poziomy</span>
+                        <span>Timer</span>
+                    </div>
+                </div>
+                <div class="play-label">&#9654; Graj</div>
+            </a>
+
+            <a href="../tictactoe/index.html" class="game-card">
+                <div class="game-thumb" style="background: linear-gradient(135deg, #ff6b6b, #74b9ff);">
+                    &#10060;&#11093;
+                </div>
+                <div class="game-info">
+                    <h3>Kolko i Krzyzyk</h3>
+                    <p>Zmierz sie z AI opartym na algorytmie Minimax. Czy pokonasz komputer?</p>
+                    <div class="game-tags">
+                        <span>Minimax AI</span>
+                        <span>3 trudnosci</span>
+                    </div>
+                </div>
+                <div class="play-label">&#9654; Graj</div>
+            </a>
+
+            <a href="../hangman/index.html" class="game-card">
+                <div class="game-thumb" style="background: linear-gradient(135deg, #636e72, #dfe6e9);">
+                    &#128128;
+                </div>
+                <div class="game-info">
+                    <h3>Wisielec</h3>
+                    <p>Zgaduj slowa z kategorii IT litera po literze. Rysowanie na Canvas.</p>
+                    <div class="game-tags">
+                        <span>Canvas</span>
+                        <span>25 slow</span>
+                        <span>Klawiatura</span>
+                    </div>
+                </div>
+                <div class="play-label">&#9654; Graj</div>
+            </a>
+
+            <a href="../2048/index.html" class="game-card">
+                <div class="game-thumb" style="background: linear-gradient(135deg, #edcf72, #edc22e);">
+                    &#128290;
+                </div>
+                <div class="game-info">
+                    <h3>2048</h3>
+                    <p>Przesuwaj kafelki, lacz liczby i dotrzyj do 2048!</p>
+                    <div class="game-tags">
+                        <span>Swipe</span>
+                        <span>Animacje</span>
+                        <span>Rekord</span>
+                    </div>
+                </div>
+                <div class="play-label">&#9654; Graj</div>
+            </a>
+        </div>
+
+        <a href="../../index.html" class="back-link">&larr; Powrot do portfolio</a>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('games-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('games-theme', next);
+        });
+    </script>
+</body>
+</html>
