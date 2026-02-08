@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kacper — Developer Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Nawigacja -->
+    <nav class="navbar">
+        <div class="nav-brand">Kacper<span class="accent">.</span></div>
+        <ul class="nav-links">
+            <li><a href="#home">Start</a></li>
+            <li><a href="#about">O mnie</a></li>
+            <li><a href="#skills">Umiejetnosci</a></li>
+            <li><a href="#projects">Projekty</a></li>
+            <li><a href="#contact">Kontakt</a></li>
+        </ul>
+        <button class="nav-toggle" aria-label="Menu">&#9776;</button>
+    </nav>
+
+    <!-- Hero -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <p class="hero-greeting">Czesc, jestem</p>
+            <h1 class="hero-name">Kacper</h1>
+            <p class="hero-title">Junior Developer</p>
+            <p class="hero-desc">Tworze aplikacje webowe i szukam nowych wyzwan. Chetnie pomoge Ci z Twoim projektem.</p>
+            <div class="hero-buttons">
+                <a href="#projects" class="btn btn-primary">Moje projekty</a>
+                <a href="#contact" class="btn btn-outline">Napisz do mnie</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- O mnie -->
+    <section id="about" class="section">
+        <div class="container">
+            <h2 class="section-title">O mnie</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Jestem studentem z pasja do programowania. Interesuje mnie tworzenie stron internetowych, aplikacji i rozwiazywanie problemow za pomoca kodu.</p>
+                    <p>Szukam zlecen freelance oraz mozliwosci wspolpracy przy ciekawych projektach. Jestem otwarty na nauke nowych technologii i chetnie podejmuje sie wyzwan.</p>
+                    <div class="about-stats">
+                        <div class="stat">
+                            <span class="stat-number">5+</span>
+                            <span class="stat-label">Projektow</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">1+</span>
+                            <span class="stat-label">Lat nauki</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">100%</span>
+                            <span class="stat-label">Zaangazowania</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Umiejetnosci -->
+    <section id="skills" class="section section-dark">
+        <div class="container">
+            <h2 class="section-title">Umiejetnosci</h2>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <div class="skill-icon">&#60;/&#62;</div>
+                    <h3>HTML & CSS</h3>
+                    <p>Responsywne strony, Flexbox, Grid, animacje CSS</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">JS</div>
+                    <h3>JavaScript</h3>
+                    <p>ES6+, DOM, API, programowanie asynchroniczne</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">Py</div>
+                    <h3>Python</h3>
+                    <p>Skrypty, automatyzacja, podstawy backendu</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">Git</div>
+                    <h3>Git & GitHub</h3>
+                    <p>Kontrola wersji, wspolpraca, CI/CD</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">DB</div>
+                    <h3>Bazy danych</h3>
+                    <p>SQL, podstawy NoSQL, modelowanie danych</p>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">+</div>
+                    <h3>I wiecej...</h3>
+                    <p>Chetnie ucze sie nowych technologii pod projekt</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projekty -->
+    <section id="projects" class="section">
+        <div class="container">
+            <h2 class="section-title">Projekty</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image">Projekt 1</div>
+                    <div class="project-info">
+                        <h3>Aplikacja To-Do</h3>
+                        <p>Prosta aplikacja do zarzadzania zadaniami z lokalnym zapisem danych.</p>
+                        <div class="project-tags">
+                            <span>HTML</span>
+                            <span>CSS</span>
+                            <span>JavaScript</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="btn btn-small">Demo</a>
+                            <a href="#" class="btn btn-small btn-outline">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image">Projekt 2</div>
+                    <div class="project-info">
+                        <h3>Strona pogodowa</h3>
+                        <p>Aplikacja pokazujaca pogode na podstawie lokalizacji z uzyciem API.</p>
+                        <div class="project-tags">
+                            <span>JavaScript</span>
+                            <span>API</span>
+                            <span>CSS</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="btn btn-small">Demo</a>
+                            <a href="#" class="btn btn-small btn-outline">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image">Projekt 3</div>
+                    <div class="project-info">
+                        <h3>Portfolio (ta strona!)</h3>
+                        <p>Responsywna strona portfolio stworzona od zera.</p>
+                        <div class="project-tags">
+                            <span>HTML</span>
+                            <span>CSS</span>
+                            <span>JavaScript</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="btn btn-small">Demo</a>
+                            <a href="#" class="btn btn-small btn-outline">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kontakt -->
+    <section id="contact" class="section section-dark">
+        <div class="container">
+            <h2 class="section-title">Kontakt</h2>
+            <div class="contact-content">
+                <p class="contact-desc">Masz pomysl na projekt? Szukasz developera? Napisz do mnie!</p>
+                <form class="contact-form" id="contactForm">
+                    <input type="text" name="name" placeholder="Twoje imie" required>
+                    <input type="email" name="email" placeholder="Twoj email" required>
+                    <textarea name="message" placeholder="Twoja wiadomosc..." rows="5" required></textarea>
+                    <button type="submit" class="btn btn-primary">Wyslij wiadomosc</button>
+                </form>
+                <div class="contact-links">
+                    <a href="https://github.com/Zakiz17" target="_blank">GitHub</a>
+                    <a href="https://linkedin.com/in/Zakiz17" target="_blank">LinkedIn</a>
+                    <a href="mailto:kacper200619@gmail.com">Email</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 Kacper. Wszystkie prawa zastrzezone.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
